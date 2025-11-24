@@ -78,7 +78,7 @@ function RenderEditItem({ fetchData }: { fetchData: () => void }) {
 
 export default function CadItem() {
 
-  const [rowData, setRowData] = useState<[{ nome: string, id: string | null }]>([{ nome: "Sem itens", id: null }]);
+  const [rowData, setRowData] = useState<[{ nome: string, id: string | null }]>([]);
   const [colDefs, setColDefs] = useState<ColDef[]>([
     { field: "nome" },
     { field: "id" },

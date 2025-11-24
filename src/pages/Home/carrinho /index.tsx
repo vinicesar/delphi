@@ -58,7 +58,7 @@ export default function Cart() {
     return (
         <Box sx={{ width: '100%', height: '100%' }}>
             <Form<initialValueCart, typeCart> onSubmit={handleSubmitCart} control={control} style={{ width: '100%' }}>
-                <Accordion>
+                <Accordion defaultExpanded={true}>
                     <AccordionSummary
                         aria-controls="panel1a-content"
                         expandIcon={<ArrowDropDown />}
@@ -129,6 +129,7 @@ export default function Cart() {
                     }
                     ).catch((err: any) => {
                         const msg = err?.response?.data?.message || 'Erro ao finalizar compra'
+                        console.log(err)
                         handleShowAlert(msg, 'error')
                     })
                 }

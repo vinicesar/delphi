@@ -52,7 +52,7 @@ export default function InitialPage() {
                 handleShowAlert('Logado com sucesso', 'success')
             })
                 .catch((err) => {
-                    const msg = err?.response?.data?.message || 'Erro ao logar'
+                    const msg = err?.response?.data?.message || 'Erro'
                     handleShowAlert(msg, 'error')
                 }
                 )

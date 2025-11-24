@@ -22,10 +22,7 @@ function ListCart({ cartChanged }: { cartChanged: boolean }) {
         nomeitem: string,
         quantidade: number
     }]>
-        ([{
-            nomeitem: "Sem itens",
-            quantidade: 0
-        }]);
+        ([]);
 
 
     const [colDefs] = useState<ColDef[]>([
@@ -127,7 +124,6 @@ function ListCart({ cartChanged }: { cartChanged: boolean }) {
 
 
     return (
-        <>
             <div className="ag-theme-alpine" style={{ height: '80%', width: '45%' }}>
                 <h2>Carrinho</h2>
                 <AgGridReact
@@ -135,7 +131,6 @@ function ListCart({ cartChanged }: { cartChanged: boolean }) {
                     columnDefs={colDefs}
                 />
             </div>
-        </>
     )
 }
 

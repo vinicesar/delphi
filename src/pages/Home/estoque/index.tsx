@@ -3,26 +3,43 @@ import { AllCommunityModule, ModuleRegistry, type ColDef } from 'ag-grid-communi
 import { Grid } from "@mui/material";
 import { AgGridReact } from "ag-grid-react";
 import getStock from "../../../services/servicesListStock/getItens";
+import getItens from "../../../services/serviceListProdut/getItem"
 import getHistory from "../../../services/serviceHistory/getHistory";
 
 ModuleRegistry.registerModules([AllCommunityModule])
 
-function ListStock() {
+function ListStock(){
 
-
-    const [rowData, setRowData] = useState<[{ nomeitem: string, quantidade: number, id: string | null }]>([{ nomeitem: "Sem itens", quantidade: 0, id: null }]);
-    const [colDefs, setColDefs] = useState<ColDef[]>([
-        { field: "nomeitem", headerName: "Item" },
-        { field: "id" },
+    const [rowDataEstoque, setRowDataEstoque] = useState<[{ nomeitem: string, quantidade: number, id: string | null }]>([]);
+    const [colDefsEstoque, setColDefsEstoque] = useState<ColDef[]>([
+        { field: "nameitem", headerName: "Item" },
+        { field: "id_stock", headerName: "Id Estoque" },
         { field: "quantidade" },
+        {field: "item_id", headerName: "id do produto"}
     ]);
 
     async function atualizaStock() {
         const all = await getStock()
         if (all.data.length !== 0) {
-            setRowData(all.data)
+        setRowDataEstoque(all.data)
         }
     }
+
+    useEffect(() => {
+        atualizaStock()
+    }, [])
+
+    function ListHistory() {
+
+        const [rowData, setRowData] = useState<[{ nomePessoa: string, nomeItem: string, quantidade: number, operacao: string }]>([]);
+
+        const [colDefs, setColDefs] = useState<ColDef[]>([
+            { field: "nome_user" , headerName: "Usuario" },
+            { field: "nome_item" , headerName: "Item"},
+            { field: "quantidade" , headerName: "Quantidade"},
+            { field: "tipo_movimentacao" , headerName: "Operação" },
+            { field: "id" , headerName: "Historico Id"}
+        ]);
 
     async function atualizaHistory() {
         const all = await getHistory();
@@ -32,20 +49,8 @@ function ListStock() {
     }
 
     useEffect(() => {
-        atualizaStock()
-        atualizaHistory()
+      atualizaHistory()
     }, [])
-
-    function ListHistory() {
-
-        const [rowData, setRowData] = useState<[{ nomePessoa: string, nomeItem: string, quantidade: number, operacao: string }]>([{ nomePessoa: "Sem itens", nomeItem: "Sem itens", quantidade: 0, operacao: "Sem itens" }]);
-
-        const [colDefs, setColDefs] = useState<ColDef[]>([
-            { field: "nomePessoa" },
-            { field: "nomeItem" },
-            { field: "quantidade" },
-            { field: "operacao" }
-        ]);
 
         return (
             <>
@@ -68,8 +73,8 @@ function ListStock() {
                 <div className="ag-theme-alpine" style={{ height: '80%', width: '45%', margin: '2rem' }}>
                     <h2>Estoque</h2>
                     <AgGridReact
-                        rowData={rowData}
-                        columnDefs={colDefs}
+                        rowData={rowDataEstoque}
+                        columnDefs={colDefsEstoque}
                     />
                 </div>
                 <ListHistory />
