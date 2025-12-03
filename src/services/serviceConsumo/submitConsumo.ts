@@ -1,27 +1,19 @@
 import api from "../config";
-import getItens from "../serviceListProdut/getItem";
+import getMe from "../servicesUser/getMe";
 
-export async function SubmitConsumo(consumoData: Array<{ nameItem: string; quantidade: number , id: string }>) {
-  const allProducts = await getItens();
-  const user = await api.get("/me");
+export async function SubmitConsumo(consumoData: {
+  nome_item: string;
+  quantidade: number;
+  item_id: string;
+}) {
+  const user = await getMe();
 
-  if (consumoData.length !== 0) {
-    consumoData.map((i: any) => {
-      allProducts.data.map((p: any) => {
-        if (i.nomeitem === p.nome) {
-
-          api.post("/SubmitConsumo", {
-            user_id: user.data.data.id,
-            nome_user: user.data.data.nome,
-            item_id: p.id,
-            nome_item: p.nome,
-            tipo_movimentacao: "saida",
-            quantidade: i.quantidade
-          });
-        }
-      });
-    });
-  }
-
-  return await api.post("/SubmitConsumo");
+  await api.post("/SubmitConsumo", {
+    user_id: user.data.data.id,
+    nome_user: user.data.data.nome,
+    item_id: Number(consumoData.item_id),
+    nome_item: consumoData.nome_item,
+    tipo_movimentacao: "saida",
+    quantidade: consumoData.quantidade,
+  });
 }

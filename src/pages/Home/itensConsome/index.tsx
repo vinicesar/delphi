@@ -12,6 +12,7 @@ import { IconButton } from "@mui/material";
 import { Add, Delete, Remove } from "@mui/icons-material";
 import { z } from "zod";
 import { SubmitConsumo } from '../../../services/serviceConsumo/submitConsumo';
+import getStock from '../../../services/servicesListStock/getItens';
 
 
 
@@ -267,15 +268,40 @@ function Consumido() {
           right: 40,
           gap: '.7rem'
         }}
-        onClick={() => SubmitConsumo(rowData)
-          .then(() => {
-            handleShowAlert('Descontado com sucesso', 'success')
+        onClick={async () => {
+          const stock = await getStock();
+          const allProducts = await getItens();
+          if (rowData.length === 0) {
+            handleShowAlert("Nenhum item para consumir", "error")
+            return
           }
-          ).catch((err: any) => {
-            const msg = err?.response?.data?.message || 'Erro ao finalizar compra'
-            console.log(err)
-            handleShowAlert(msg, 'error')
-          })
+          for (const i of rowData) {
+            const product = allProducts.data.find((p: { id: string; nome: string }) => p.nome === i.nameItem);
+            if (!product) {
+              handleShowAlert(`Produto ${i.nameItem} não encontrado`, "error")
+              continue;
+            }
+            const stockItem = stock.data.find((s: {
+              item_id: string;
+              quantidade: number;
+            }) => s.item_id === product.id);
+            if (stockItem.quantidade < i.quantidade) {
+              handleShowAlert(`Estoque do produto ${i.nameItem} não é suficiente`, "error")
+              continue;
+            }
+            await SubmitConsumo({
+              item_id: product.id!,
+              nome_item: i.nameItem,
+              quantidade: i.quantidade
+            }).then(() => {
+              handleShowAlert(`Consumo do item ${i.nameItem} registrado com sucesso`, "success")
+              localStorage.removeItem("Consumo")
+              setRowData([])
+            }).catch(() => {
+              handleShowAlert(`Erro ao registrar o consumo do item ${i.nameItem}`, "error")
+            })
+          }
+        }
         }
       >
         {"Descontar Consumo"}
